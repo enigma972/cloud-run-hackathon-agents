@@ -38,8 +38,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       await login(email, password)
     } catch (err: any) {
       const msg = err?.message || String(err)
-      if (msg.includes("wrong-password") || msg.includes("password")) setError("Incorrect password")
-      else if (msg.includes("user-not-found")) setError("No account found for this email")
+      if (msg.includes("wrong-password") || msg.includes("password")) setError("Invalid email or password")
+      else if (msg.includes("user-not-found")) setError("Invalid email or password")
       else setError(msg)
     } finally {
       setLoading(false)
