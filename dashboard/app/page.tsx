@@ -12,7 +12,7 @@ export default function Home() {
           <a href="#features" className="hover:underline">Features</a>
           <a href="#pricing" className="hover:underline">Pricing</a>
           <a href="#docs" className="hover:underline">Docs</a>
-          <a href="#" className="rounded-full border px-4 py-2 text-sm">Sign in</a>
+          <a href="/login" className="rounded-full border px-4 py-2 text-sm">Sign in</a>
         </nav>
       </header>
 
@@ -29,7 +29,7 @@ export default function Home() {
 
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
               <a
-                href="#get-started"
+                href="/signup"
                 className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-6 py-3 text-white font-medium shadow hover:bg-indigo-700"
               >
                 Get Started — it's free

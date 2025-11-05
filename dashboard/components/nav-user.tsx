@@ -28,6 +28,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useAuth } from "@/hooks/useAuth"
+import Link from "next/link"
 
 export function NavUser({
   user,
@@ -39,6 +41,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const { logout } = useAuth()
 
   return (
     <SidebarMenu>
@@ -85,24 +88,33 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <a href="/account" className="flex items-center gap-2">
+                <Link href="/account" className="flex items-center gap-2">
                   <IconUserCircle />
                   <span>Account</span>
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <a href="/notifications" className="flex items-center gap-2">
+                <Link href="/notifications" className="flex items-center gap-2">
                   <IconNotification />
                   <span>Notifications</span>
-                </a>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <a href="/logout" className="flex items-center gap-2">
+              <button
+                onClick={async () => {
+                  try {
+                    await logout()
+                  } catch (e) {
+                    console.error("Logout failed", e)
+                  }
+                }}
+                className="flex items-center gap-2"
+              >
                 <IconLogout />
                 <span>Log out</span>
-              </a>
+              </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
