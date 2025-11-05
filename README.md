@@ -46,6 +46,7 @@ The chatbot's "training" is fully automated and decoupled from the main applicat
 | **Vector Search**      | Cloud Vector Search (Vertex AI) | Database for RAG embeddings.                                         |
 | **Database**           | Cloud Firestore                 | Storage for bot metadata and configurations.                         |
 | **Frontend/Hosting**   | Firebase Hosting & Auth         | Hosts the Admin Dashboard and Widget. Provides Admin authentication. |
+| **Management API**     | Firebase Function (Node.js)     | Generates secure GCS signed URLs and manages Firestore bot creation/updates.  |
 | **File Storage**       | Google Cloud Storage (GCS)      | Secure storage for raw uploaded documents.                           |
 
 
@@ -61,7 +62,8 @@ The chatbot's "training" is fully automated and decoupled from the main applicat
         
     -   `backend-ingestion-job` to a **Cloud Run Job**.
         
-    -   `frontend-admin` to **Firebase Hosting**.
-        
+    -   `dashboard` to **Firebase Hosting**.
+    
+    -   `dashboard/functions` to **Firebase Functions**.
 
 We are excited to showcase how serverless multi-agent architecture can transform customer support.
