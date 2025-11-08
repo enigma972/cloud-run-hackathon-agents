@@ -70,7 +70,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               <Field>
                 {error && <div className="text-sm text-red-600">{error}</div>}
                 <Button type="submit" disabled={loading}>{loading ? 'Signing in...' : 'Login'}</Button>
-                <Button variant="outline" type="button">Login with Google</Button>
+                {/* <Button variant="outline" type="button">Login with Google</Button> */}
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link href="/signup">Sign up</Link>
                 </FieldDescription>

@@ -88,7 +88,7 @@ export function SignupForm({
               <Field>
                 {error && <div className="text-sm text-red-600">{error}</div>}
                 <Button type="submit" disabled={loading}>{loading ? 'Creating...' : 'Create Account'}</Button>
-                <Button variant="outline" type="button">Sign up with Google</Button>
+                {/* <Button variant="outline" type="button">Sign up with Google</Button> */}
                 <FieldDescription className="text-center">
                   Already have an account? <Link href="/login">Sign in</Link>
                 </FieldDescription>

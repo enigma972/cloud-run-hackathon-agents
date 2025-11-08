@@ -2,6 +2,33 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Fonction helper pour vérifier l'authentification
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Fonction helper pour vérifier si l'utilisateur est le propriétaire du bot
+    function isOwner(resource) {
+      return isAuthenticated() && resource.data.admin_id == request.auth.uid;
+    }
+    
+    // Règles pour la collection bots
+    match /bots/{botId} {
+      // Lecture : uniquement le propriétaire du bot
+      allow read: if isAuthenticated() && 
+        (resource == null || resource.data.admin_id == request.auth.uid);
+      
+      // Pas de création directe - doit passer par la Cloud Function
+      allow create: if false;
+      
+      // Modification : uniquement le propriétaire du bot
+      allow update: if isOwner(resource);
+      
+      // Suppression : uniquement le propriétaire du bot
+      allow delete: if isOwner(resource);
+    }
+    
+    // Par défaut, bloquer tout autre accès
     match /{document=**} {
       allow read, write: if false;
     }
