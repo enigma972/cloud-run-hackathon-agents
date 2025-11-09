@@ -255,20 +255,6 @@ export function TrainingView() {
             <p className="text-muted-foreground">Manual data entry options would go here</p>
           </div>
         )}
-
-        {/* Previous Uploads */}
-        <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-          <h3 className="font-semibold text-foreground">Previous Uploads</h3>
-          <div className="relative">
-            <Search className="absolute left-3 top-3 text-muted-foreground" size={18} />
-            <input
-              type="text"
-              placeholder="Search sources..."
-              className="w-full bg-muted border border-border rounded-lg pl-10 pr-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <p className="text-muted-foreground text-center py-4">No sources found</p>
-        </div>
       </div>
     </div>
   )
