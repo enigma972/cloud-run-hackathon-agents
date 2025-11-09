@@ -4,7 +4,14 @@ import { ChevronUp, ChevronDown, Plus, Trash2 } from "lucide-react"
 import { useState } from "react"
 
 export function PersonalityView() {
-  const [expandedSection, setExpandedSection] = useState<string | null>("personality")
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    personality: true,
+    model: false,
+    tool: false,
+    length: false,
+    tone: false,
+    instructions: false,
+  })
 
   // États des champs
   const [selectedTone, setSelectedTone] = useState("professional")
@@ -25,7 +32,10 @@ export function PersonalityView() {
   })
 
   const toggleSection = (section: string) => {
-    setExpandedSection(expandedSection === section ? null : section)
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }))
   }
 
   const markDirty = (key: keyof typeof dirty) => {
@@ -76,9 +86,9 @@ export function PersonalityView() {
         <div className="bg-card border border-border rounded-lg p-6 space-y-4">
           <button onClick={() => toggleSection("personality")} className="w-full flex items-center justify-between">
             <h2 className="text-lg font-semibold text-foreground">Your name is "AI Assistant"</h2>
-            {expandedSection === "personality" ? <ChevronUp /> : <ChevronDown />}
+            {expandedSections.personality ? <ChevronUp /> : <ChevronDown />}
           </button>
-          {expandedSection === "personality" && (
+          {expandedSections.personality && (
             <>
               <textarea
                 value={personalityText}
@@ -168,10 +178,10 @@ export function PersonalityView() {
                 Add or remove specific instructions that your AI agent should follow.
               </p>
             </div>
-            {expandedSection === "instructions" ? <ChevronUp /> : <ChevronDown />}
+            {expandedSections.instructions ? <ChevronUp /> : <ChevronDown />}
           </button>
 
-          {expandedSection === "instructions" && (
+          {expandedSections.instructions && (
             <>
               <div className="space-y-4">
                 <div className="flex gap-2">
