@@ -1,7 +1,14 @@
 "use client"
 
-import { ChevronUp, ChevronDown, Plus, Trash2 } from "lucide-react"
-import { useState } from "react"
+import { ChevronUp, ChevronDown, Plus, Trash2, MoreVertical, Image as ImageIcon, User } from "lucide-react"
+import { useState, useRef } from "react"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function AppearanceView() {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -13,7 +20,7 @@ export function AppearanceView() {
 
   const [welcomeMessage, setWelcomeMessage] = useState("Hi! What can I help you with?")
   const [showPopup, setShowPopup] = useState(false)
-  const [iceBreakers, setIceBreakers] = useState(["Question1", "Question2"])
+  const [iceBreakers, setIceBreakers] = useState(["Question1"])
   const [newIceBreaker, setNewIceBreaker] = useState("")
 
   const [displaySettings, setDisplaySettings] = useState({
@@ -91,6 +98,89 @@ export function AppearanceView() {
     markDirty("display")
   }
 
+  const ImageWithMenu = ({
+    src,
+    alt,
+    onUpdate,
+    onDelete,
+    defaultIcon: DefaultIcon,
+    className = ""
+  }: {
+    src: string
+    alt: string
+    onUpdate: () => void
+    onDelete: () => void
+    defaultIcon: React.ReactNode
+    className?: string
+  }) => {
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    const handleUpdateClick = () => {
+      fileInputRef.current?.click()
+    }
+
+    return (
+      <div className="">
+        <div className="relative w-16 h-16 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+          {src ? (
+            <img
+              src={src}
+              alt={alt}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="text-muted-foreground">
+              {DefaultIcon}
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 h-6 w-6">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={handleUpdateClick}>
+                  <ImageIcon className="mr-2 h-4 w-4" />
+                  <span>Update</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onDelete} className="text-destructive">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  <span>Delete</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept="image/*"
+          onChange={(e) => {
+            onUpdate()
+            const file = e.target.files?.[0]
+            if (file) {
+              const reader = new FileReader()
+              reader.onloadend = () => {
+                const result = reader.result as string
+                setDisplaySettings((prev) => ({
+                  ...prev,
+                  [alt.toLowerCase().includes('avatar') ? 'avatar' : 'buttonImage']: result
+                }))
+                markDirty("display")
+              }
+              reader.readAsDataURL(file)
+            }
+            // Réinitialiser la valeur pour permettre la sélection du même fichier
+            e.target.value = ''
+          }}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="flex gap-6 p-6 h-full">
       <div className="flex-1 space-y-4 overflow-y-auto">
@@ -154,7 +244,7 @@ export function AppearanceView() {
         <div className="bg-card border border-border rounded-lg p-6 space-y-4">
           <button onClick={() => toggleSection("icebreakers")} className="w-full flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-foreground">Ice Breaker Questions</h2>
+              <h2 className="text-lg text-start font-semibold text-foreground">Ice Breaker Questions</h2>
               <p className="text-sm text-muted-foreground">
                 Give people suggested prompts to start the conversation with your agent.
               </p>
@@ -218,7 +308,7 @@ export function AppearanceView() {
         <div className="bg-card border border-border rounded-lg p-6 space-y-4">
           <button onClick={() => toggleSection("display")} className="w-full flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-foreground">Display Settings</h2>
+              <h2 className="text-lg text-start font-semibold text-foreground">Display Settings</h2>
               <p className="text-sm text-muted-foreground">
                 Customize how your chat looks and when it appears.
               </p>
@@ -268,43 +358,29 @@ export function AppearanceView() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col items-start">
-                    <label className="text-sm font-medium mb-2">Agent Avatar</label>
-                    <div className="relative w-16 h-16 rounded-full bg-muted border border-border overflow-hidden flex items-center justify-center">
-                      {displaySettings.avatar ? (
-                        <img src={displaySettings.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-2xl">👤</span>
-                      )}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(e, "avatar")}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                      />
-                    </div>
+                <div className="grid grid-cols-4 gap-4 items-end">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Agent Avatar</label>
+                    <ImageWithMenu
+                      src={displaySettings.avatar}
+                      alt="Agent Avatar"
+                      onUpdate={() => {}}
+                      onDelete={() => handleDeleteImage('avatar')}
+                      defaultIcon={<User className="h-8 w-8 text-muted-foreground" />}
+                    />
                   </div>
 
-                  <div className="flex flex-col items-start">
-                    <label className="text-sm font-medium mb-2">Button Image</label>
-                    <div className="relative w-16 h-16 rounded-lg bg-muted border border-border overflow-hidden flex items-center justify-center">
-                      {displaySettings.buttonImage ? (
-                        <img src={displaySettings.buttonImage} alt="Button" className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-2xl">🔵</span>
-                      )}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(e, "buttonImage")}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Button Image</label>
+                    <ImageWithMenu
+                      src={displaySettings.buttonImage}
+                      alt="Button Image"
+                      onUpdate={() => {}}
+                      onDelete={() => handleDeleteImage('buttonImage')}
+                      defaultIcon={<User className="h-8 w-8 text-muted-foreground" />}
+                    />
                   </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Agent Position</label>
                     <select
@@ -313,7 +389,7 @@ export function AppearanceView() {
                         setDisplaySettings({ ...displaySettings, position: e.target.value })
                         markDirty("display")
                       }}
-                      className="w-full bg-muted border border-border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-32 bg-muted border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option>Right</option>
                       <option>Left</option>
@@ -322,15 +398,20 @@ export function AppearanceView() {
 
                   <div>
                     <label className="block text-sm font-medium mb-1">Primary Color</label>
-                    <input
-                      type="color"
-                      value={displaySettings.primaryColor}
-                      onChange={(e) => {
-                        setDisplaySettings({ ...displaySettings, primaryColor: e.target.value })
-                        markDirty("display")
-                      }}
-                      className="w-12 h-12 border border-border rounded cursor-pointer"
-                    />
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={displaySettings.primaryColor}
+                        onChange={(e) => {
+                          setDisplaySettings({ ...displaySettings, primaryColor: e.target.value })
+                          markDirty("display")
+                        }}
+                        className="w-10 h-10 border border-border rounded cursor-pointer"
+                      />
+                      <span className="text-sm text-muted-foreground">
+                        {displaySettings.primaryColor}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
